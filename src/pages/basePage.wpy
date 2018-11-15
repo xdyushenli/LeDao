@@ -1,0 +1,19 @@
+<style lang="less">
+</style>
+
+<template>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import API from '../api/api'
+    import * as UTIL from '../common/scripts/util'
+    import * as WXUTIL from '../common/scripts/wxUtil'
+
+    export default class Base extends wepy.page {
+        $API = API;
+        $U = UTIL;
+        $WX = WXUTIL;
+    }
+</script>
+      

@@ -1,0 +1,23 @@
+<style lang="less">
+  
+</style>
+<template>
+  <view class="container">
+    <video></video>
+    <sign></sign>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import video from '../components/video'
+  import sign from '../components/sign'
+  export default class Review extends wepy.page {
+    components = {
+      video: video,
+      sign: sign
+    }
+    config = {
+      navigationBarTitleText: '复习视频'
+    }
+  }
+</script>

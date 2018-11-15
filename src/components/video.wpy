@@ -1,0 +1,125 @@
+<style lang="less">
+
+.scrol {
+  height: 934rpx;
+  overflow: hidden;
+}
+.video{
+  position: relative;
+}
+.model-img{
+	width: 690rpx;
+  height: 380rpx;
+  background-color: grey;
+}
+.model-btn{
+	position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  right:0;
+  margin:auto;
+  width:100rpx;
+  height:100rpx;
+  border-radius:50%;
+  background-color: rgba(0,0,0,.3);
+}
+.play-icon{
+  margin:28rpx 40rpx;
+  border-top:26rpx solid transparent;
+  border-left:36rpx solid #FFDD54;
+  border-bottom:22rpx solid transparent;
+  border-radius: 4rpx;
+}
+.videoMessageBox {
+  width: 686rpx;
+  height: 60rpx;
+  background-color: #fff;
+  border: 1rpx dotted #000;
+  margin: -8rpx 0 28rpx 0;
+}
+.videoMessage {
+  margin-top: 6rpx;
+}
+.comma {
+  margin-bottom: 6rpx;
+  width: 15rpx;
+  height: 15rpx;
+}
+.new {
+  margin-bottom: 15rpx;
+  width: 38rpx;
+  height: 12rpx;
+  }
+</style>
+<template>
+  <view class="videoList">
+    <scroll-view scroll-y class="scroll">
+      <block wx:for="{{videoList}}" wx:key="unique">
+        <view class="video" data-url="{{item.url}}" data-name="{{item.courseName}}" data-index="{{index}}" bindtap="videoPlay">
+          <image class="model-img" src="{{poster}}"/>
+          <view class="model-btn">
+            <view class="play-icon"></view>
+          </view>
+        </view>
+        <view class="videoMessageBox">
+          <view class="videoMessage">
+            <lable><image class="comma" src="{{comma}}"/></lable>
+            {{item.uploadTime}}  {{item.courseName}}
+            <lable><image wx:if="{{index === latest}}" class="new" src="{{new}}"/></lable>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+    <view style="height: 90rpx;"></view>
+  </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import api from '../api/api'
+  export default class Video extends wepy.component {
+    data = {
+      poster: '../images/pic1.png', // video cover
+      comma: '../images/dian.png',
+      new: '../images/new.png',
+      latest: 0,
+      date: '',
+      course: '',
+      videoList: []
+    }
+    dealResponse(res) {
+      for (let i = 0; i < res.length; i++) {
+        res[i].uploadTime = res[i].uploadTime.split(' ')[0]
+        res[i].courseName = res[i].courseName + '-Chapter' + res[i].videoName.split('-')[1]
+      }
+      // console.log(res)
+      return res
+    }
+    async onLoad() { // 腾讯视频默认宽高 300:225（4:3） 获取设备的宽高成4:3比例设置与原型差别较大，此时设置宽为设备宽度*2rpx，高默认为690rpx
+      this.videoContext = wepy.createVideoContext('myVideo')
+      let status = wepy.getStorageSync('signStatus')
+      try {
+        let Info = await api.getVideo()
+        if (Info.statusCode === 200) {
+          // let videoInfo = JSON.stringify(Info.data)
+          let videoInfo = Info.data.data
+          this.videoList = this.dealResponse(videoInfo)
+          this.$apply()
+        }
+      } catch (err) {
+        console.log(err)
+      }
+      if (!status) {
+        this.latest = -1
+        this.$apply()
+      }
+    }
+    methods = {
+      videoPlay(e) {
+        wepy.navigateTo({
+          url: '../pages/playvideo?url=' + e.currentTarget.dataset.url + '&name=' + e.currentTarget.dataset.name + '&index=' + e.currentTarget.dataset.index
+        })
+      }
+    }
+  }
+</script>

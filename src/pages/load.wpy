@@ -1,0 +1,15 @@
+<style lang="less">
+</style>
+
+<template>
+</template>
+
+<script>
+	import page from './basePage'
+
+    export default class Load extends page {
+        onLoad () {
+            this.$WX.jumpTo('./index')
+        }
+    }
+</script>
