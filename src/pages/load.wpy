@@ -1,0 +1,155 @@
+<style lang="less">
+    @import '../common/styles/index.less';
+
+    .mask{
+        width: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal{
+        width: 500rpx;
+        height: 300rpx;
+        background: #fff;
+        border-radius: 10rpx;
+        overflow: hidden;
+
+        &-input{
+            width: 100%;
+            height: 200rpx;
+
+            & input{
+                width: 80%;
+                border-bottom: 2rpx solid #51C332;
+            }
+        }
+
+        &-btns{
+            width: 100%;
+            height: 100rpx;
+            border-top: 2rpx solid #51C332;
+            overflow: hidden;
+        }
+    
+        &-cancel, &-confirm{
+            width: 50%;
+            height: 100rpx;
+            font-size: 35rpx;
+            overflow: hidden;
+        }
+
+        &-cancel{
+            text-align: center;
+            line-height: 100rpx;
+        }
+
+        &-confirm{
+            border-left: 2rpx solid #51C332;
+
+            & button{
+                border-radius: 0;
+                background: #fff;
+                color: #51C332;
+                font-size: 35rpx;
+                line-height: 100rpx;
+            }
+
+            & button::after {
+                border: none;
+                border-radius: 0;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="l-rowAllMid mask"
+        style="height: {{high + 'rpx'}}; display: {{showModal ? 'flex' : 'none'}};">
+        <view class="l-col modal">
+            <view class="l-rowAllMid modal-input">
+                <input  type="number"
+                        value='{{veriCode}}'
+                        style="padding-left: 5rpx;"
+                        placeholder="请输入验证码" 
+                        maxlength='4' 
+                        placeholder-style='color: #818399; font-size: 32rpx;'/>
+            </view>
+            <view class="l-row modal-btns">
+                <view class="modal-cancel" @tap='cancel'>取消</view>
+                <view class="modal-confirm">
+                    <button open-type="getUserInfo" @getuserinfo="getInfo" hover-class="none">提交并授权</button>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import page from './basePage'
+
+    export default class Load extends page {
+        data = {
+            showModal: false,
+            high: 1206,
+            veriCode: ''
+        }
+
+        methods = {
+            cancel (e) {
+                this.showModal = false;
+                this.$apply();
+            },
+            getInfo (e) {
+                console.log(e)
+                if (e.detail.userInfo) {
+                    this.$API.veriCode({code: this.veriCode})
+                    .then(res => {
+                        console.log(res)
+                    })
+                }
+            }
+        }
+
+        onLoad () {
+            // 获取用户屏幕高度
+            this.$WX.getSystemInfo()
+            .then(res => {
+                res.windowHeight ? this.$parent.windowHeight = res.windowHeight * 750 / res.windowWidth : 1206;
+                this.high = this.$parent.windowHeight;
+            })
+            
+            // 获取用户授权信息,若用户已授权跳过登录页
+            this.$WX.getSetting()
+            .then(res => {
+                // 未授权
+                if (!res.authSetting['scope.userInfo']) {
+                    // 弹出提示框
+                    this.showModal = true;
+                    this.$apply();
+                } 
+
+                // 已授权
+                if (res.authSetting['scope.userInfo']) {
+                    // 登录所需的数据
+                    let login = {}
+
+                    this.$WX.wxLogin()
+                    .then(res => {
+                        login.code = res.code;
+                        return this.$WX.wxGetUserInfo();
+                    })
+                    .then(res => {
+                        login.avatar = res.userInfo.avatarUrl;
+                        login.nickname = res.userInfo.nickName;
+                        console.log(login)
+                        // 用户登录
+                        return this.$API.login({data: login});
+                    })
+                    .then(res => {
+                        console.log(res)
+                        this.$WX.jumpTo('./index')
+                    })
+                }
+            })
+        }
+    }
+</script>

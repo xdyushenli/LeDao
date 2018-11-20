@@ -1,46 +1,30 @@
+<style lang="less">
+  
+</style>
 <template>
   <view class="container">
-    {{video}}
+    <video :courseName.sync="courseName"></video>
+    <sign :id.sync="childId"></sign>
   </view>
 </template>
 <script>
   import wepy from 'wepy'
-  import api from '../api/api'
+  import video from '../components/video'
+  import sign from '../components/sign'
   export default class Review extends wepy.page {
+    components = {
+      video: video,
+      sign: sign
+    }
+    data = {
+      courseName: 'k1',
+      childId: 6
+    }
     config = {
       navigationBarTitleText: '复习视频'
     }
-    async onLoad() {
-      var self = this
-      try {
-        let res = await api.getVideo()
-        if (res.data.code === 200) {
-          self.video = res.data.message
-          self.$apply()
-        }
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    data = {
-      video: 'video'
-    }
-    mothods = {
-      bindViewTap () {
-        console.log('button clicked')
-      }
-    }
-    watch = {
-      num (newValue, oldValue) {
-        console.log(`num value: ${oldValue}->${oldValue}`)
-      }
-    }
-    getData() {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve({data: 123})
-        }, 3000)
-      })
+    onLoad(option) {
+      // console.log(option)
     }
   }
 </script>

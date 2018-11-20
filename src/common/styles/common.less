@@ -1,0 +1,64 @@
+/* 定义一些公用的style，采用BEM(block-element__modifier)的规则进行命令，以及使用公共命名空间。*/
+/*
+.l- layouts（全局使用的布局)
+*/
+@import "variables";
+@import "functions";
+
+view{
+	box-sizing: border-box;
+}
+
+/* layouts */
+// 横向排列item的盒子
+.l-row{
+	.rowBox();
+}
+
+// 纵向排列item的盒子
+.l-col{
+	.colBox();
+}
+
+// 横向盒子且垂直水平居中
+.l-rowAllMid{
+	.rowBox();
+	.allMidBox();
+}
+
+// 横向盒子且垂直居中
+.l-rowVerMid{
+	.rowBox();
+	.colMidBox();
+}
+
+// 横向盒子且水平居中
+.l-rowJusMid{
+	.rowBox();
+	.rowMidBox();
+}
+
+// 竖向盒子且垂直水平居中
+.l-colAllMid{
+	.colBox();
+	.allMidBox();
+}
+
+// 竖向盒子且垂直居中
+.l-colVerMid{
+	.colBox();
+	.rowMidBox();
+}
+
+// 竖向盒子且水平居中
+.l-colJusMid{
+	.colBox();
+	.colMidBox();
+}
+
+.relative{
+	position: relative;
+}
+.absolute{
+	position: absolute;
+}
