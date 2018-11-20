@@ -21,7 +21,11 @@
 </style>
 <template>
 <view class="playVideo">
+<<<<<<< HEAD
   <video class="myVideo" id="myVideo" bindended="ended" src="{{url}}" autoplay="true" objectFit="fill" ></video>
+=======
+  <video class="myVideo" id="myVideo" bindended="ended" src="http://wxsnsdy.tc.qq.com/105/20210/snsdyvideodownload?filekey=30280201010421301f0201690402534804102ca905ce620b1241b726bc41dcff44e00204012882540400&bizid=1023&hy=SH&fileparam=302c020101042530230204136ffd93020457e3c4ff02024ef202031e8d7f02030f42400204045a320a0201000400" autoplay="true" objectFit="fill" ></video>
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
   <text>{{courseName}}</text>
 </view>
 </template>
@@ -45,7 +49,11 @@ export default class PlayVideo extends wepy.page {
   methods = {
     ended() {
       let status = wepy.getStorageSync('signStatus')
+<<<<<<< HEAD
       // console.log(status)
+=======
+      console.log(status)
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
       if (status === 'undefined') {
         wepy.setStorageSync('signStatus', true)
       }

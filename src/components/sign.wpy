@@ -146,9 +146,12 @@
       signStatus: null, // 签到弹窗
       courseSignNumber: 0
     }
+<<<<<<< HEAD
     props = {
       id: Number
     }
+=======
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
     methods = {
       sign_in() {
         this.modaldisplay = 'block'
@@ -162,8 +165,15 @@
     }
     async onLoad() {
       this.signStatus = wepy.getStorageSync('signStatus')
+<<<<<<< HEAD
       try {
         let res = await api.signIn({id: this.id})
+=======
+      // console.log(this.signStatus)
+      try {
+        let res = await api.signIn({method: 'PUT'})
+        // console.log(res)
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
         this.courseSignNumber = res.data.data.courseSignNumber
       } catch (err) {
         console.log(err)

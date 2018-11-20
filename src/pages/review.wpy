@@ -3,8 +3,13 @@
 </style>
 <template>
   <view class="container">
+<<<<<<< HEAD
     <video :courseName.sync="courseName"></video>
     <sign :id.sync="childId"></sign>
+=======
+    <video></video>
+    <sign></sign>
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
   </view>
 </template>
 <script>
@@ -16,6 +21,7 @@
       video: video,
       sign: sign
     }
+<<<<<<< HEAD
     data = {
       courseName: 'k1',
       childId: 6
@@ -26,5 +32,10 @@
     onLoad(option) {
       // console.log(option)
     }
+=======
+    config = {
+      navigationBarTitleText: '复习视频'
+    }
+>>>>>>> d7109c774acc7bbe4b0ad0057f94fcae2adce3c1
   }
 </script>
