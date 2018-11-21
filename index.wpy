@@ -1,0 +1,221 @@
+<style lang="less" type="text/less">
+  @import '../common/styles/index.less';
+
+  .swiper{
+    width: 690rpx;
+    height: 21%;
+    margin-top: 3.6%;
+    border-radius: 20rpx;
+    background: #000;
+    overflow: hidden;
+
+    image{
+      width: 100%;
+      height: 100%;
+    }
+
+    &-dots{
+      width: 100%;
+    
+      view{
+        width: 18rpx;
+        height: 18rpx;
+        margin: 16rpx;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .child-info{
+    width: 690rpx;
+    height: 33%;
+    margin-top: 3.75%;
+
+    &-title{
+      width: 100%;
+      height: 60rpx;
+
+      view{
+        float: left;
+        width: 10rpx;
+        height: 36rpx;
+        background: @yellow;
+      }
+
+      text{
+        float: left;
+        padding-left: 20rpx;
+        color: @black;
+        font-size: 38rpx;
+      }
+    }
+
+    &-list{
+      width: 100%;
+      height: 88%;
+      margin-top: 20rpx;
+      border-radius: 30rpx;
+      background: #fff;
+      box-shadow: 0 8rpx rgba(0, 0, 0, 0.1);
+
+      .avatar{
+        width: 210rpx;
+        height: 210rpx;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .single-btn{
+        width: 290rpx;
+        height: 72rpx;
+        margin-top: 20rpx;
+        border-radius: 36rpx;
+        background: #FAD76F;
+        color: @black;
+        text-align: center;
+        font-size: 38rpx;
+        line-height: 72rpx;
+      }
+
+      .fir-child,.sec-child{
+        width: 50%;
+        height: 100%;
+      }
+
+      .fir-child{
+        border-right: 2rpx solid @grey;
+      }
+
+      .double-btn{
+        width: 200rpx;
+        height: 72rpx;
+        margin-top: 20rpx;
+        border-radius: 36rpx;
+        background: #FAD76F;
+        color: @black;
+        text-align: center;
+        font-size: 38rpx;
+        line-height: 72rpx;
+      }
+    }
+  }
+
+  .index-bg{
+    position: fixed;
+    bottom: 0;
+    width: 750rpx;
+    height: 21%;
+  }
+</style>
+
+<template>
+  <view class="l-colJusMid" style="height: {{windowHeight + 'rpx'}}; background: #f4f4f4;">
+    <!-- 轮播图 -->
+    <swiper class="swiper" @change='changeDots' autoplay='true'>
+      <block wx:for='{{imgList}}'>
+        <swiper-item style="border-radius: 20rpx; overflow: hidden">
+          <image src='{{item.src}}' mode='scaleToFill'/>
+        </swiper-item>
+      </block>
+    </swiper>
+    <view class="l-rowAllMid swiper-dots">
+      <view wx:for='{{imgList}}' style="background: {{item.active ? '#FAD76F' : '#c9c9c9'}};"></view>
+    </view>
+
+    <!-- 孩子信息 -->
+    <view class="child-info">
+      <view class="l-rowVerMid child-info-title">
+        <view></view>
+        <text>学员登录</text>
+      </view>
+
+      <view wx:if='{{childList.length === 1}}' class="l-colAllMid child-info-list">
+        <image class="avatar" src='{{childList[0].avatar}}' />
+        <button class="single-btn" @tap='jumpToDetails(0)'>{{childList[0].username}}</button>
+      </view>
+
+      <view wx:else class="l-row child-info-list">
+        <view class="l-colAllMid fir-child">
+          <image class="avatar" src='{{childList[0].avatar}}' />
+          <button class="double-btn" @tap='jumpToDetails(0)'>{{childList[0].username}}</button>
+        </view>
+        <view class="l-colAllMid sec-child">
+          <image class="avatar" src='{{childList[1].avatar}}' />
+          <button class="double-btn" @tap='jumpToDetails(1)'>{{childList[1].username}}</button>
+        </view>
+      </view>
+    </view>
+
+    <image class="index-bg" src='../images/indexbg.png' />
+  </view>
+</template>
+
+<script>
+  import page from './basePage'
+
+  export default class Index extends page {
+    config = {
+      navigationBarBackgrundColor: '#FAD76F',
+      backgroundColor: '#fafafa',
+      navigationBarTitleText: '首页'
+    }
+
+    data = {
+      windowHeight: 1206,
+      imgList: [
+        {
+          src: '',
+          active: true
+        },
+        {
+          src: '',
+          active: false
+        },
+        {
+          src: '',
+          active: false
+        }
+      ],
+      childList: [
+        
+      ]
+    }
+
+    methods = {
+      changeDots (e) {
+        let current = e.detail.current;
+
+        this.imgList.filter((val, idx) => {
+          val.active = (idx === current ? true : false);
+        });
+
+        this.$apply();
+      },
+      jumpToDetails (idx, e) {
+        let url = './usercenter' + this.$U.objToUrl(this.childList[idx])
+        this.$WX.jumpTo(url)
+      }
+    }
+
+    onLoad (options) {
+      console.log('index')
+      console.log(options)
+      // 设置窗口高度
+      this.windowHeight = this.$parent.windowHeight || 1206
+
+      this.$API.getChildren({id: Number(options.id), header: {Authentication: options.Authentication}})
+      .then(res => {
+        this.childList = res.data.data
+        this.$apply()
+        console.log(this.childList)
+        return this.$API.getCarousel()
+      })
+      .then(res => {
+        this.imgList.forEach((ele, idx) => {
+          ele.src = res.data.data[idx].photo
+        });
+        this.$apply()
+      })
+    }
+  }
+</script>

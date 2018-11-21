@@ -1,0 +1,197 @@
+<style lang="less" type="text/less">
+    @import '../common/styles/index.less';
+
+    .baseinfo{
+        width: 100%;
+        height: 370rpx;
+        background: #fff;
+        box-shadow: 0 8rpx rgba(0, 0, 0, 0.1);
+
+        &-avatar{
+            width: 50%;
+            height: 100%;
+
+            image{
+                width: 230rpx;
+                height: 230rpx;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+        }
+
+        &-names{
+            width: 50%;
+            height: 100%;
+        
+            .name,.score,.sign-number{
+                width: 100%;
+                height: 40rpx;
+                color: @black;
+                font-size: 30rpx;
+            }
+
+            .name{
+                image{
+                    width: 80rpx;
+                    height: 34rpx;
+                    margin-left: 20rpx;
+                }
+            }
+        }
+    }
+
+    .details{
+        width: 750rpx;
+        background: transparent;
+        margin-top: 25rpx;
+
+        .slider{
+            width: 100%;
+            height: 100rpx;
+            background: #fff;
+            margin: 8rpx 0;
+            padding: 0 30rpx;
+
+            &-img{
+                width: 50rpx;
+                height: 50rpx;
+            }
+
+            &-title{
+                width: 100rpx;
+                margin: 0 20rpx;
+                color: @lightblack;
+                font-size: 30rxp;
+                white-space: nowrap;
+            }
+
+            &-text{
+                position: relative;
+                width: 490rpx;
+                height: 100%;
+                color: @lightblack;
+                text-align: right;
+                font-size: 30rxp;
+                line-height: 100rpx;
+            }
+
+            &-ding{
+                position: absolute;
+                top: 25rpx;
+                right: 30rpx;
+                width: 18rpx;
+                height: 18rpx;;
+            }
+
+            &-next{
+                position: absolute;
+                top: 40rpx;
+                right: -12rpx;
+                width: 20rpx;
+                height: 30rpx;
+            }
+        }
+    }
+</style>
+
+<template>
+    <view class="l-col" 
+            style="height: {{windowHeight + 'rpx'}}; background: #f4f4f4;">
+        <view class="l-rowVerMid baseinfo">
+            <view class="l-rowAllMid baseinfo-avatar">
+                <image src='{{childInfo.avatar}}' />
+            </view>
+            <view class="l-colVerMid baseinfo-names">
+                <view class="l-rowVerMid name">
+                    <text>{{childInfo.username}}</text>
+                    <image @tap='uploadAvatar' src='../images/carmera.png' />
+                </view>
+                <view class="score">我的积分：{{childInfo.score}}</view>
+                <view class="sign-number">连续签到：{{childInfo.courseSignNumber}}天</view>
+            </view>
+        </view>
+
+        <view class="details">
+            <view class="l-rowVerMid slider gender">
+                <image class="slider-img" src='../images/gender.png' />
+                <view class='slider-title'>性别</view>
+                <view class="slider-text">{{childInfo.gender === 0 ? '男' : '女'}}</view>
+            </view>
+            <view class="l-rowVerMid slider age">
+                <image class="slider-img" src='../images/age.png' />
+                <view class='slider-title'>年龄</view>
+                <view class="slider-text">{{childInfo.age}}</view>
+            </view>
+            <view class="l-rowVerMid slider birth">
+                <image class="slider-img" src='../images/birth.png' />
+                <view class='slider-title'>生日</view>
+                <view class="slider-text">{{childInfo.birthday}}</view>
+            </view>
+            <view class="l-rowVerMid slider canlendar">
+                <image class="slider-img" src='../images/canlendar.png' />
+                <view class='slider-title'>课程进度</view>
+                <view class="slider-text">{{'k' + childInfo.courseName + '-book' + childInfo.courseSignNumber}}</view>
+            </view>
+            <view class="l-rowVerMid slider clock">
+                <image class="slider-img" src='../images/clock.png' />
+                <view class='slider-title'>课时进度</view>
+                <view class="slider-text">{{childInfo.courseSignNumber + '/' + childInfo.courseSum}}</view>
+            </view>
+            <view class="l-rowVerMid slider video">
+                <image class="slider-img" src='../images/video.png' />
+                <view class='slider-title'>复习视频</view>
+                <view class="slider-text">
+                    <image class="slider-ding" src='../images/ding.png' />
+                    <image class="slider-next" @tap='jumpToVideos' src='../images/next.png' />
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+import page from './basePage'
+
+export default class UserCenter extends page {
+    config = {
+        navigationBarBackgrundColor: '#FAD76F',
+        backgroundColor: '#fafafa',
+        navigationBarTitleText: '个人中心'
+    }
+
+    data = {
+        windowHeight: 1206,
+        childInfo: {}
+    }
+
+    methods = {
+        uploadAvatar (e) {
+            this.$WX.chooseImg()
+            .then(res => {
+                return this.$WX.uploadFile(
+                    `http://39.106.63.214:8888/children/${this.childInfo.id}/avatar`,
+                    res.tempFilePaths[0],
+                    'file',
+                    {}
+                )
+            })
+            .then(res => {
+                console.log(res)
+            })
+        },
+        jumpToVideos (e) {
+            let url = `./review?id=${this.childInfo.id}&coursename=k${this.childInfo.courseName}`
+            this.$WX.jumpTo(url)
+        }
+    }
+
+    onLoad (options) {
+        console.log('usercenter')
+        console.log(options)
+        // 设置窗口高度
+        this.windowHeight = this.$parent.windowHeight || 1206
+        this.childInfo = options
+        this.$apply()
+    }
+}
+</script>
